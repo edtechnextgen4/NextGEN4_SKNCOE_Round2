@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Submit Skill — Peerify</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0b0f14;
+  --glass:#ffffff05;
+  --border:#ffffff12;
+  --neon1:#6a1b9a;
+  --neon2:#2193b0;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:#e9eef3;
+  font-family:'Poppins',sans-serif;
+}
+textarea, input {
+  resize: none;
+}
+
+/* HEADER */
+header{
+  padding:16px 20px;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.container{
+  width: 600px;        /* Change width as you want */
+  margin: 40px auto;   /* Centers the container */
+  padding: 22px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
+}
+
+.topnav {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding: 20px;
+}
+
+.topnav a {
+  padding: 10px 22px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  transition: 0.25s;
+  font-weight: 500;
+}
+
+.topnav a:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-3px);
+}
+
+/* Highlight active page */
+.topnav a.active {
+  background: rgba(0, 153, 255, 0.3);
+  color: white;
+  border-color: rgba(0, 153, 255, 0.8);
+}
+
+/* ---- NAV BUTTON ANIMATION ---- */
+.topnav a {
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+/* Hover motion */
+.topnav a:hover {
+  transform: translateY(-4px) scale(1.05);
+}
+
+/* Glow border animation */
+.topnav a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 2px;
+  background: linear-gradient(90deg, #6a1b9a, #2193b0);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+/* Hover glow visible */
+.topnav a:hover::before {
+  opacity: 1;
+}
+
+/* Active page glowing */
+.topnav a.active::before {
+  opacity: 1;
+}
+
+.topnav a {
+  position: relative;
+  overflow: hidden;
+}
+
+.topnav a:hover::after {
+  content: "";
+  position: absolute;
+  width: 140%;
+  height: 140%;
+  left: -20%;
+  top: -20%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,0.25) 10%, transparent 60%);
+  transform: scale(0);
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  font-weight:600;
+}
+
+input, textarea{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.05);
+  color:white;
+  font-size:15px;
+}
+
+.btn{
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+  border:none;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  color:white;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="display:flex;flex-direction:column;">
+      <div style="font-weight:700">Peerify</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.9)">Submission</div>
+    </div>    <header class="topnav">
+  <nav>
+     <a href="login.html">Login</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="submit.html">Submit</a>
+    <a href="review.html">Review</a>
+    <a href="profile.html">Profile</a>
+<a href="leaderboard.html">Leaderboard</a>
+
+  </nav>
+</header>
+  </div>
+ <div id="currentUserDisplay" style="font-weight:700;"></div>
+  </div>
+
+ </header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Submit a Skill</h2>
+
+    <label>Skill Title</label>
+    <input id="titleInput" placeholder="e.g. Web Development Project">
+
+    <label>Description</label>
+    <textarea id="descInput" rows="4" placeholder="Short details..."></textarea>
+
+    <!-- ⭐ FILE INPUT ADDED -->
+    <label>Upload File (Image / Video / PDF)</label>
+    <input type="file" id="fileInput" accept="image/*,video/*,.pdf,.doc,.docx"/>
+
+    <button class="btn" style="margin-top:16px;" onclick="submitSkill()">Submit Skill (+10)</button>
+
+    <div id="statusMsg" style="margin-top:10px;font-weight:600;"></div>
+  </div>
+
+</div>
+
+<script>
+/* STORAGE KEYS */
+const STORAGE_KEYS = {
+  SKILLS:'hv_skills',
+  USERS:'hv_users',
+  COUNTER:'hv_skillIdCounter',
+  CURRENT_USER:'hv_currentUser'
+};
+
+function getSkills(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS)||'[]'); }
+function setSkills(v){ localStorage.setItem(STORAGE_KEYS.SKILLS,JSON.stringify(v)); }
+
+function getUsers(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)||'{}'); }
+function setUsers(v){ localStorage.setItem(STORAGE_KEYS.USERS,JSON.stringify(v)); }
+
+function currentUser(){ return localStorage.getItem(STORAGE_KEYS.CURRENT_USER)||''; }
+
+/* SET USER */
+function setUser(){
+  const name=document.getElementById('username').value.trim();
+  if(!name){ alert("Enter your name"); return; }
+  localStorage.setItem(STORAGE_KEYS.CURRENT_USER,name);
+
+  let users=getUsers();
+  if(!users[name]) users[name]={points:0};
+  setUsers(users);
+}
+
+/* SUBMIT SKILL */
+function submitSkill(){
+  const title = document.getElementById('titleInput').value.trim();
+  const description = document.getElementById('descInput').value.trim();
+  const uploader = currentUser();
+  const file = document.getElementById('fileInput').files[0];
+
+  if(!uploader){ alert("Set your name first!"); return; }
+  if(!title){ alert("Enter a title"); return; }
+  
+  let skills = getSkills();
+  let counter = parseInt(localStorage.getItem(STORAGE_KEYS.COUNTER) || 1);
+
+
+  if (file) {
+  
+  const maxSize = 10 * 1024 * 1024;   // 5MB
+  if (file.size > maxSize) {
+    alert("File too large! Maximum allowed size is 10MB.");
+    return;}
+  const reader = new FileReader();
+  reader.onload = function(e) {
+
+    const fileData = e.target.result; 
+
+    skills.push({
+      id: counter,
+      title,
+      uploader,
+      description,
+      filename:file.name,
+      fileData,   // ⭐ SAVES ACTUAL DATA
+      createdAt: Date.now(),
+      status: "Pending"
+    });
+
+    setSkills(skills);
+    localStorage.setItem(STORAGE_KEYS.COUNTER, counter + 1);
+
+    const users = getUsers();
+    if(!users[uploader]) users[uploader] = { points: 0 };
+      users[uploader].points += 10;
+    setUsers(users);
+
+    document.getElementById("statusMsg").innerText =
+      `Skill submitted! ID: ${counter}`;
+
+    document.getElementById("titleInput").value="";
+    document.getElementById("descInput").value="";
+    document.getElementById("fileInput").value="";
+  };
+  reader.readAsDataURL(file);
+    return;
+}
+skills.push({
+    id: counter,
+    title,
+    uploader,
+    description,
+    filename: "",
+    fileData: "",
+    createdAt: Date.now(),
+    status: "Pending"
+  });
+  setSkills(skills);
+  localStorage.setItem(STORAGE_KEYS.COUNTER, counter + 1);
+
+  const users = getUsers();
+  if(!users[uploader]) users[uploader] = { points: 0 };
+  users[uploader].points += 10;
+  setUsers(users);
+
+  document.getElementById('statusMsg').innerText = `Skill submitted! ID: ${counter}`;
+  document.getElementById('titleInput').value = '';
+  document.getElementById('descInput').value = '';
+  
+ 
+}
+ 
+</script>
+<script>
+  const page = location.pathname.split("/").pop();
+  document.querySelectorAll(".topnav a").forEach(a=>{
+    if(a.getAttribute("href") === page){
+      a.classList.add("active");
+    }
+  });
+</script>
+
+</body>
+</html>

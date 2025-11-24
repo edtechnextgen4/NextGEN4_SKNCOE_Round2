@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Review Skill — Peerify</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#06080d;
+  --panel:#0f141d;
+  --accent1:#6a1b9a;
+  --accent2:#2193b0;
+  --muted:#8e9aab;
+  --card-border:rgba(255,255,255,0.08);
+  --card-bg:rgba(255,255,255,0.03);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:radial-gradient(circle at top, #0d1623 0%, #06080d 65%);
+  color:#eaf3fb;
+}
+textarea,input{ resize:none; }
+
+/* Header */
+header{
+  display:flex;
+  align-items:center;
+  gap:24px;
+  justify-content:flex-start;
+  padding:16px 20px;
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  color:white;
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+
+/* Navbar */
+.topnav {
+  display:flex;
+  gap:14px;
+  padding:0;
+}
+.topnav a {
+  padding:10px 22px;
+  border-radius:12px;
+  text-decoration:none;
+  color:white;
+  border:1px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.05);
+  transition:.25s;
+  font-weight:500;
+  position:relative;
+  overflow:hidden;
+}
+.topnav a:hover {
+  background:rgba(255,255,255,0.15);
+  transform:translateY(-3px) scale(1.05);
+}
+.topnav a.active{
+  background:rgba(0,153,255,0.3);
+  border-color:rgba(0,153,255,0.8);
+}
+
+/* Main container */
+.container{
+  width:1000px;
+  margin:20px auto;
+  padding:22px;
+  background:rgba(255,255,255,0.02);
+  border-radius:18px;
+}
+
+/* Card */
+.card{
+  margin-top:20px;
+  padding:20px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:14px;
+}
+
+/* Labels & Inputs */
+label{
+  display:block;
+  margin-top:14px;
+  font-weight:600;
+}
+input[type="text"],textarea{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.02);
+  color:#fff;
+  margin-top:8px;
+}
+.muted{ color:var(--muted); }
+
+/* Buttons */
+.btn{
+  padding:10px 16px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.05);
+  cursor:pointer;
+  font-weight:700;
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  color:white;
+}
+.btn.ghost{
+  background:transparent;
+  border-color:rgba(255,255,255,0.08);
+  color:var(--accent2);
+}
+
+/* Stars */
+.star {
+  font-size:30px;
+  color:#555;
+  cursor:pointer;
+  transition:0.2s;
+  user-select:none;
+}
+.star.active {
+  color:#ffd166;
+  transform:scale(1.1);
+}
+
+/* Pending List */
+.pending-item{
+  padding:14px;
+  border-radius:12px;
+  margin-bottom:12px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+}
+.pending-item strong{
+  color:var(--accent1);
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div style="font-weight:700;font-size:18px;">Peerify</div>
+    <div style="font-size:12px;opacity:.9;">Review Panel</div>
+  </div>
+
+  <nav class="topnav">
+    <a href="login.html">Login</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="submit.html">Submit</a>
+    <a href="review.html">Review</a>
+    <a href="profile.html">Profile</a>
+    <a href="leaderboard.html">Leaderboard</a>
+  </nav>
+</header>
+
+
+<div class="container">
+
+  <!-- Review Form -->
+  <div class="card">
+    <h2>Review a Skill</h2>
+    <div class="muted">Enter an ID or click one from pending below. 0–5 stars each.</div>
+
+    <label>Skill ID</label>
+    <input id="skillIdInput" type="text" placeholder="e.g. 3">
+
+    <label>Authenticity</label>
+    <div id="authStars" class="stars" data-value="5">
+      <span class="star" data-value="1">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="5">★</span>
+    </div>
+
+    <label>Quality</label>
+    <div id="qualityStars" class="stars" data-value="5">
+      <span class="star" data-value="1">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="5">★</span>
+    </div>
+
+    <label>Notes (optional)</label>
+    <textarea id="reviewNotes" rows="4" placeholder="Feedback..."></textarea>
+
+    <div style="display:flex;gap:12px;margin-top:18px;">
+      <button class="btn" onclick="submitReview()">Submit Review (+5)</button>
+      <button class="btn ghost" onclick="clearForm()">Clear</button>
+    </div>
+
+    <div id="reviewResult" class="muted" style="margin-top:10px;font-weight:700;"></div>
+
+    <h3 style="margin-top:24px;">Preview</h3>
+    <div id="filePreview" class="muted" style="margin-top:10px;"></div>
+  </div>
+
+  <!-- Pending -->
+  <div class="card">
+    <h3>Pending Submissions</h3>
+    <div id="pendingList" class="muted"></div>
+  </div>
+
+</div>
+
+
+<script>
+/* Storage keys */
+const STORAGE_KEYS={
+  SKILLS:'hv_skills',
+  USERS:'hv_users',
+  REVIEWS:'hv_reviews',
+  COUNTER:'hv_skillIdCounter',
+  CURRENT_USER:'hv_currentUser'
+};
+
+/* Helpers */
+function getSkills(){return JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS)||'[]');}
+function setSkills(v){localStorage.setItem(STORAGE_KEYS.SKILLS,JSON.stringify(v));}
+function getUsers(){return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)||'{}');}
+function setUsers(v){localStorage.setItem(STORAGE_KEYS.USERS,JSON.stringify(v));}
+function getReviews(){return JSON.parse(localStorage.getItem(STORAGE_KEYS.REVIEWS)||'[]');}
+function setReviews(v){localStorage.setItem(STORAGE_KEYS.REVIEWS,JSON.stringify(v));}
+function currentUser(){return localStorage.getItem(STORAGE_KEYS.CURRENT_USER)||'';}
+
+window.onload=()=>{
+  initStars();
+  loadPending();
+};
+
+/* Initialize clickable star rating */
+function initStars(){
+  document.querySelectorAll('.stars').forEach(box=>{
+    box.querySelectorAll('.star').forEach(star=>{
+      star.addEventListener('click',()=>{
+        setStars(box,parseInt(star.dataset.value));
+      });
+    });
+  });
+
+  /* Set initial visuals */
+  setStars(document.getElementById("authStars"),5);
+  setStars(document.getElementById("qualityStars"),5);
+}
+
+function setStars(box,value){
+  box.dataset.value=value;
+  box.querySelectorAll('.star').forEach(star=>{
+    star.classList.toggle('active',parseInt(star.dataset.value)<=value);
+  });
+}
+
+function getVal(id){
+  return parseInt(document.getElementById(id).dataset.value||5);
+}
+
+/* Load pending submissions */
+function loadPending(){
+  const skills=getSkills().filter(s=>s.status==='Pending');
+  const el=document.getElementById('pendingList');
+
+  if(!skills.length){
+    el.innerHTML='<div>No pending submissions.</div>';
+    return;
+  }
+
+  el.innerHTML=skills.map(s=>`
+    <div class="pending-item">
+      <div><strong onclick="fillSkillId(${s.id})">ID ${s.id}</strong> — ${safeHTML(s.title)}</div>
+      <div class="muted" style="margin-top:6px;">By ${safeHTML(s.uploader)}</div>
+      <div class="muted" style="margin-top:6px;">${safeHTML(s.description||'')}</div>
+    </div>
+  `).join('');
+}
+
+function fillSkillId(id){
+  document.getElementById("skillIdInput").value=id;
+  loadPreview(id);
+  window.scrollTo({top:80,behavior:'smooth'});
+}
+
+/* Submit Review */
+function submitReview(){
+  const id=parseInt(document.getElementById('skillIdInput').value.trim());
+  const auth=getVal('authStars');
+  const quality=getVal('qualityStars');
+  const notes=document.getElementById('reviewNotes').value.trim();
+  const reviewer=currentUser();
+
+  if(!reviewer){alert("Please login first.");return;}
+  if(isNaN(id)){alert("Invalid Skill ID");return;}
+
+  let skills=getSkills();
+  const skill=skills.find(s=>s.id===id);
+  if(!skill){alert("Skill not found");return;}
+
+  if(skill.uploader===reviewer){
+    alert("You cannot review your own submission.");
+    return;
+  }
+
+  const reviews=getReviews();
+  reviews.push({
+    skillId:id,
+    reviewer,
+    authenticity:auth,
+    quality,
+    notes,
+    createdAt:new Date().toISOString()
+  });
+  setReviews(reviews);
+
+  /* Add points */
+  let users=getUsers();
+  users[reviewer].points=(users[reviewer].points||0)+5;
+  setUsers(users);
+
+  /* Determine result */
+  const avg=(auth+quality)/2;
+  skill.status=avg>=3.5?'Approved':'Rejected';
+  setSkills(skills);
+
+  document.getElementById('reviewResult').innerText=
+    `Review saved — ${skill.status}. (+5 points)`;
+
+  clearForm();
+  loadPending();
+}
+
+/* Clear form */
+function clearForm(){
+  document.getElementById('skillIdInput').value='';
+  document.getElementById('reviewNotes').value='';
+  setStars(document.getElementById('authStars'),5);
+  setStars(document.getElementById('qualityStars'),5);
+}
+
+/* Preview */
+function loadPreview(id){
+  const skills=getSkills();
+  const skill=skills.find(s=>s.id==id);
+  const box=document.getElementById("filePreview");
+
+  if(!skill || !skill.fileData){
+    box.innerHTML="No file available.";
+    return;
+  }
+
+  const url=skill.fileData;
+  const name=(skill.filename||"").toLowerCase();
+
+  if(name.match(/\.(jpg|jpeg|png|gif|webp)$/)){
+    box.innerHTML=`<img src="${url}" style="max-width:100%;border-radius:12px;">`;
+  }
+  else if(name.match(/\.(mp4|webm)$/)){
+    box.innerHTML=`<video controls style="width:100%;border-radius:12px;"><source src="${url}"></video>`;
+  }
+  else if(name.match(/\.(mp3|wav)$/)){
+    box.innerHTML=`<audio controls style="width:100%;"><source src="${url}"></audio>`;
+  }
+  else if(name.endsWith(".pdf")){
+    box.innerHTML=`<embed src="${url}" type="application/pdf" style="width:100%;height:420px;border-radius:12px;">`;
+  }
+  else{
+    box.innerHTML=`<a href="${url}" download>Download ${skill.filename}</a>`;
+  }
+}
+
+/* Safe text */
+function safeHTML(s){
+  return String(s).replace(/[&<>"']/g,m=>(
+    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
+  ));
+}
+</script>
+
+<script>
+/* Highlight active page in nav */
+const page = location.pathname.split("/").pop();
+document.querySelectorAll(".topnav a").forEach(a=>{
+  if(a.getAttribute("href") === page){
+    a.classList.add("active");
+  }
+});
+</script>
+
+</body>
+</html>

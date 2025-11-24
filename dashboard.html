@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Dashboard — Peerify</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0b0f14;
+  --neon1:#6a1b9a;
+  --neon2:#2193b0;
+  --glass-border:rgba(255,255,255,0.06);
+  --muted:#98a6b2;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:#e9eef3;
+  font-family:'Poppins',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 20px;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  color:white;
+  position:sticky;
+  top:0;
+  z-index:40;
+}
+.topnav {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding: 20px;
+}
+
+.topnav a {
+  padding: 10px 22px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  transition: 0.25s;
+  font-weight: 500;
+}
+
+.topnav a:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-3px);
+}
+
+/* Highlight active page */
+.topnav a.active {
+  background: rgba(0, 153, 255, 0.3);
+  color: white;
+  border-color: rgba(0, 153, 255, 0.8);
+}
+/* ---- NAV BUTTON ANIMATION ---- */
+.topnav a {
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+/* Hover motion */
+.topnav a:hover {
+  transform: translateY(-4px) scale(1.05);
+}
+
+/* Glow border animation */
+.topnav a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 2px;
+  background: linear-gradient(90deg, #6a1b9a, #2193b0);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+/* Hover glow visible */
+.topnav a:hover::before {
+  opacity: 1;
+}
+
+/* Active page glowing */
+.topnav a.active::before {
+  opacity: 1;
+}
+.topnav a {
+  position: relative;
+  overflow: hidden;
+}
+
+.topnav a:hover::after {
+  content: "";
+  position: absolute;
+  width: 140%;
+  height: 140%;
+  left: -20%;
+  top: -20%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,0.25) 10%, transparent 60%);
+  transform: scale(0);
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+}
+.container{
+  max-width:1150px;
+  margin:28px auto;
+  padding:20px;
+}
+.row{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+}
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:14px;
+  padding:18px;
+  border:1px solid var(--glass-border);
+  box-shadow:0 20px 50px rgba(2,6,23,0.6);
+}
+.wide{ flex:1 1 720px; }
+.side{ flex:0 0 360px; }
+
+h2{ margin:0 0 8px 0; color:#fff; }
+.muted{ color:var(--muted); margin-top:6px; }
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:12px;
+  font-size:15px;
+  color:#eaf3fb;
+}
+.table th{
+  text-align:left;
+  padding:12px;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  color:white;
+}
+.table td{
+  padding:10px 12px;
+  border-bottom:1px solid rgba(255,255,255,0.02);
+}
+
+.chip{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:13px;
+}
+.chip.pending{
+  background:#3a2a18;
+  color:#ffd79e;
+  border:1px solid rgba(255,210,150,0.06);
+}
+.chip.approved{
+  background:#063b2c;
+  color:#9ff3d1;
+  border:1px solid rgba(159,243,209,0.06);
+}
+.chip.rejected{
+  background:#3a1b1b;
+  color:#ffb3b3;
+  border:1px solid rgba(255,179,179,0.04);
+}
+
+.btn{
+  padding:8px 12px;
+  border-radius:10px;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  color:white;
+  border:1px solid rgba(255,255,255,0.04);
+  cursor:pointer;
+  font-weight:700;
+}
+.btn.ghost{
+  background:transparent;
+  color:var(--neon1);
+  border:1px solid rgba(255,255,255,0.04);
+}
+
+.userbox input{
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.03);
+  background:transparent;
+  color:inherit;
+}
+
+/* modal */
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6));
+  z-index:80;
+}
+.modal{
+  width:880px;
+  max-width:95%;
+  border-radius:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid var(--glass-border);
+  padding:18px;
+  box-shadow:0 30px 80px rgba(2,6,23,0.7);
+  color:#eaf3fb;
+}
+.meta{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:8px;
+}
+
+/* responsive */
+@media (max-width:920px){
+  .wide{flex-basis:100%}
+  .side{flex-basis:100%}
+  header{flex-direction:column;align-items:flex-start;gap:10px;}
+}
+/* Floating Chatbot */
+#chatbot-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  font-family: inherit;
+}
+
+/* Floating icon button */
+#chatbot-button {
+  width: 60px;
+  height: 60px;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  animation: chatbot-float 3s ease-in-out infinite;
+}
+
+/* Floating animation */
+@keyframes chatbot-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+#chatbot-button:hover {
+  transform: scale(1.1);
+}
+
+/* Chat window */
+#chatbot-window {
+  width: 290px;
+  height: 360px;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 14px;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+#chatbot-header {
+  padding: 10px;
+  font-weight: bold;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Message area */
+#chatbot-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+/* Input area */
+#chatbot-input-area {
+  display: flex;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+#chatbot-input {
+  flex: 1;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  color: white;
+}
+
+#chatbot-send {
+  padding: 8px 12px;
+  background: rgba(0,128,255,0.3);
+  border: none;
+  cursor: pointer;
+}
+
+/* Message bubbles */
+.bot-msg,
+.user-msg {
+  margin: 6px 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  max-width: 80%;
+}
+
+.bot-msg {
+  background: rgba(0,128,255,0.35);
+  align-self: flex-start;
+}
+
+.user-msg {
+  background: rgba(255,255,255,0.25);
+  align-self: flex-end;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="display:flex;flex-direction:column;">
+      <div style="font-weight:700">Peerify</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.9)">Dashboard</div>
+    </div>
+    <header class="topnav">
+  <nav>
+    <a href="login.html">Login</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="submit.html">Submit</a>
+    <a href="review.html">Review</a>
+    <a href="profile.html">Profile</a>
+    <a href="leaderboard.html">Leaderboard</a>
+  </nav>
+</header>
+
+    
+  </div>
+
+  <div style="display:flex;align-items:center;gap:8px;">
+    <input id="usernameInput" class="userbox" placeholder="Enter username" />
+    <button class="btn ghost" onclick="setUser()">Set User</button>
+    <div id="currentUserDisplay" style="color:rgba(255,255,255,0.95); font-weight:700;"></div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="row">
+    <div class="card wide">
+      <h2>All Skill Submissions</h2>
+      <div class="muted">Click an ID to open details. Use actions to change status.</div>
+
+      <div style="overflow:auto; margin-top:12px;">
+        <table class="table" id="skillsTable"></table>
+      </div>
+    </div>
+
+    <div class="card side">
+      <h2>Users & Points</h2>
+      <div class="muted">Points come from uploads (+10) and reviews (+5).</div>
+      <div id="usersList" style="margin-top:12px;"></div>
+
+      <hr style="margin:14px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
+
+      <h2>Your Badges</h2>
+      <div id="yourBadges" class="muted" style="margin-top:8px;">No user set</div>
+      <hr style="margin:14px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
+  
+  <h2>Your Profile</h2>
+  <div id="profileBox" style="margin-top:10px;color:var(--muted)">
+    Loading...
+  </div>  
+      <div style="text-align:right; margin-top:18px;">
+        <button class="btn ghost" onclick="resetData()">Reset Demo Data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<div id="modalBackdrop" class="modal-backdrop" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3 id="modalTitle" style="margin:0;color:#fff"></h3>
+      <div><button class="btn ghost" onclick="closeModal()">Close</button></div>
+    </div>
+
+    <div style="display:flex;gap:18px;margin-top:14px;">
+      <div style="flex:1;">
+        <div id="modalMeta" class="meta"></div>
+        <p id="modalDesc" style="margin-top:12px;color:#eaf3fb"></p>
+      </div>
+      <div style="width:320px;">
+        <div style="background:rgba(255,255,255,0.02); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02)">
+          <div style="font-size:13px;color:var(--muted)">File</div>
+          <div id="modalFile" style="margin-top:8px; font-weight:700; color:#eaf3fb"></div>
+
+          <div style="margin-top:10px">
+            <div style="font-size:13px;color:var(--muted)">Status</div>
+            <div id="modalStatus" style="margin-top:8px;"></div>
+          </div>
+
+          <div style="margin-top:14px;">
+            <div style="font-size:13px;color:var(--muted)">Preview</div>
+            <div id="modalPreview" style="margin-top:8px;"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+   
+
+
+
+<script>
+/* storage keys */
+const STORAGE_KEYS = {
+  SKILLS:'hv_skills',
+  USERS:'hv_users',
+  REVIEWS:'hv_reviews',
+  COUNTER:'hv_skillIdCounter',
+  CURRENT_USER:'hv_currentUser'
+};
+
+function getSkills(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS) || '[]'); }
+function setSkills(v){ localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(v)); }
+
+function getUsers(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '{}'); }
+function setUsers(v){ localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(v)); }
+
+
+function currentUser(){ return localStorage.getItem(STORAGE_KEYS.CURRENT_USER) || ''; }
+
+/* init UI */
+updateUI();
+
+/* set user */
+function setUser(){
+  const name = document.getElementById('usernameInput').value.trim();
+  if(!name){ alert('Enter a username'); return; }
+  localStorage.setItem(STORAGE_KEYS.CURRENT_USER, name);
+  let u = getUsers(); if(!u[name]) u[name] = { points: 0 }; setUsers(u);
+  updateUI();
+}
+
+/* badge logic */
+function badgeForPoints(points){
+  if(points<=20) return {name:'Bronze',emoji:'🥉'};
+  if(points<=40) return {name:'Silver',emoji:'🥈'};
+  return {name:'Gold',emoji:'🥇'};
+}
+
+/* render table */
+function loadSkillsTable(){
+  const skills = getSkills();
+  const table = document.getElementById('skillsTable');
+
+  if(!skills.length){
+    table.innerHTML = '<tr><td class="muted">No submissions yet</td></tr>';
+    return;
+  }
+
+ let rows = `
+<tr>
+  <th style="width:80px">ID</th>
+  <th>Title</th>
+  <th>Uploader</th>
+  <th style="width:140px">Status</th>
+  <th style="width:120px">Preview</th>
+  
+</tr>`;
+
+
+  skills.slice().reverse().forEach(s=>{
+    const statusHtml =
+      s.status==='Pending' ? `<span class="chip pending">Pending</span>`:
+      s.status==='Approved'? `<span class="chip approved">Approved</span>`:
+      `<span class="chip rejected">Rejected</span>`;
+       rows += `<tr>
+      <td style="cursor:pointer;color:var(--neon1);font-weight:700" onclick="showSkill(${s.id})">${s.id}</td>
+      <td>${escapeHtml(s.title)}</td>
+      <td>${escapeHtml(s.uploader)}</td>
+      <td>${statusHtml}</td>
+      <td>
+    ${
+      s.fileData
+      ? `<button class="btn ghost" onclick="previewSkill(${s.id})">Preview</button>`
+      : `<span style="color:gray;">No file</span>`
+    }
+  </td>
+  </tr>`;
+  });
+
+  table.innerHTML = rows;
+}
+
+/* change status */
+function changeStatus(id,newStatus){
+  let skills = getSkills();
+  skills = skills.map(s=> { if(s.id===id) s.status=newStatus; return s; });
+  setSkills(skills); updateUI();
+}
+
+/* users list */
+function loadUsers(){
+  const users = getUsers();
+  const el = document.getElementById('usersList');
+  const names = Object.keys(users);
+
+  if(!names.length){
+    el.innerHTML = '<div class="muted">No users yet</div>';
+    return;
+  }
+
+  el.innerHTML = names.map(n=>{
+    const pts = users[n].points||0;
+    const b=badgeForPoints(pts);
+
+    return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div><strong>${escapeHtml(n)}</strong><div style="color:var(--muted);font-size:13px;margin-top:6px">${pts} points</div></div>
+      <div style="font-weight:700">${b.emoji} ${b.name}</div>
+    </div>`;
+  }).join('');
+}
+
+/* your badges */
+function showYourBadges(){
+  const cu=currentUser();
+  const el=document.getElementById('yourBadges');
+
+  if(!cu){ el.innerHTML='No user set'; return; }
+
+  const users=getUsers();
+  const pts=(users[cu]&&users[cu].points)?users[cu].points:0;
+  const b=badgeForPoints(pts);
+
+  el.innerHTML = `<div style="font-weight:700">${escapeHtml(cu)}</div><div style="color:var(--muted)">${pts} points — ${b.emoji} ${b.name}</div>`;
+}
+
+/* modal */
+function showSkill(id){
+  const skills = getSkills();
+  const s = skills.find(x => x.id === id);
+  if(!s) return alert('Not found');
+
+  document.getElementById('modalTitle').innerText = `Skill ${s.id} — ${s.title}`;
+  document.getElementById('modalMeta').innerText = `Uploaded by ${s.uploader} • ${new Date(s.createdAt).toLocaleString()}`;
+  document.getElementById('modalDesc').innerText = s.description || '(no description)';
+  document.getElementById('modalFile').innerText = s.filename || '(no file)';
+  document.getElementById('modalStatus').innerHTML =
+    s.status === 'Pending' ? '<span class="chip pending">Pending</span>' :
+    s.status === 'Approved' ? '<span class="chip approved">Approved</span>' :
+    '<span class="chip rejected">Rejected</span>';
+
+  // ⭐ PREVIEW LOGIC
+  const previewBox = document.getElementById("modalPreview");
+  previewBox.innerHTML = "";
+
+  
+ if(s.fileData){
+    const name = (s.filename||'').toLowerCase();
+    if(/\.(png|jpg|jpeg|gif|webp)$/i.test(name)){
+      previewBox.innerHTML = `<img src="${s.fileData}" style="max-width:100%;border-radius:8px;">`;
+    } else if(/\.(mp4|webm|ogg)$/i.test(name)){
+      previewBox.innerHTML = `<video controls style="max-width:100%;border-radius:8px;"><source src="${s.fileData}"></video>`;
+    } else if(/\.pdf$/i.test(name)){
+      previewBox.innerHTML = `<iframe src="${s.fileData}" style="width:100%;height:300px;border-radius:8px;"></iframe>`;
+    } else {
+      previewBox.innerHTML = `<div class="muted">(Preview not supported)</div>`;
+    }
+    previewBox.innerHTML += `<div style="margin-top:10px;"><a href="${s.fileData}" download="${s.filename}" class="btn" style="padding:6px 10px;font-size:13px">Download File</a></div>`;
+  } else {
+    previewBox.innerHTML = `<div class="muted">(No preview available)</div>`;
+  }
+
+  document.getElementById('modalBackdrop').style.display = 'flex';
+}
+
+
+function closeModal(ev){
+  document.getElementById('modalBackdrop').style.display='none';
+}
+function previewSkill(id){
+  const skills = getSkills();
+  const s = skills.find(x => x.id == id);
+  if(!s){ alert('Skill not found!'); return; }
+  if(!s.fileData){ alert('No file available for preview!'); return; }
+
+  const win = window.open();
+  // simple viewer that uses iframe (works for images, pdf, video)
+  win.document.write(`<html><head><title>Preview</title></head><body style="margin:0;background:#111;color:#fff;"><iframe src="${s.fileData}" style="width:100%;height:100vh;border:none;"></iframe></body></html>`);
+}
+/* reset */
+function resetData(){
+  if(!confirm('This will clear demo data (skills, users, reviews). Continue?')) return;
+  localStorage.removeItem(STORAGE_KEYS.SKILLS);
+  localStorage.removeItem(STORAGE_KEYS.USERS);
+  localStorage.removeItem(STORAGE_KEYS.REVIEWS);
+  localStorage.removeItem(STORAGE_KEYS.COUNTER);
+  localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+  updateUI();
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function updateUI(){
+  document.getElementById('currentUserDisplay').innerText = currentUser();
+  loadSkillsTable();
+  loadUsers();
+  showYourBadges();
+loadProfileInfo();
+
+
+}
+function loadProfileInfo(){
+  const cu = currentUser();
+  const el = document.getElementById("profileBox");
+
+  if(!cu){
+    el.innerHTML = "No user logged in";
+    return;
+  }
+
+  const users = getUsers();
+  const pts = users[cu]?.points || 0;
+
+  el.innerHTML = `
+    <div><strong>${cu}</strong></div>
+    <div style="margin-top:6px;">Points: ${pts}</div>
+    <div style="margin-top:6px;">Status: ${
+      0< pts <= 20 ? "🥉 Bronze" :
+      pts <= 40 ? "🥈 Silver" :
+      "🥇 Gold"
+    }</div>
+  `;
+
+
+}
+
+updateUI();
+
+</script>
+<script>
+  const page = location.pathname.split("/").pop();
+  document.querySelectorAll(".topnav a").forEach(a=>{
+    if(a.getAttribute("href") === page){
+      a.classList.add("active");
+    }
+  });
+</script>
+<!-- Floating Chatbot Widget -->
+<div id="chatbot-widget">
+  <div id="chatbot-button">🤖</div>
+
+  <div id="chatbot-window" style="display:none;">
+    <div id="chatbot-header">
+      SkillBot
+      <span id="chatbot-close" style="cursor:pointer;">✕</span>
+    </div>
+
+    <div id="chatbot-messages">
+      <div class="bot-msg">👋 Welcome to SkillBot!</div>
+      <div class="bot-msg">Ask anything about Peerify dashboard, submissions or how the system works.</div>
+    </div>
+
+    <div id="chatbot-input-area">
+      <input id="chatbot-input" type="text" placeholder="Type a message...">
+      <button id="chatbot-send">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- Toggle open/close ---
+const chatbotBtn = document.getElementById("chatbot-button");
+const chatbotWin = document.getElementById("chatbot-window");
+const chatbotClose = document.getElementById("chatbot-close");
+
+chatbotBtn.onclick = () => chatbotWin.style.display = "flex";
+chatbotClose.onclick = () => chatbotWin.style.display = "none";
+
+// --- Messaging ---
+const msgBox = document.getElementById("chatbot-messages");
+const input = document.getElementById("chatbot-input");
+const sendBtn = document.getElementById("chatbot-send");
+
+sendBtn.onclick = sendMessage;
+input.onkeypress = e => { if(e.key === "Enter") sendMessage(); };
+
+function sendMessage(){
+  const text = input.value.trim();
+  if(!text) return;
+
+  msgBox.innerHTML += `<div class="user-msg">${text}</div>`;
+  input.value = "";
+
+  setTimeout(()=>{
+    msgBox.innerHTML += `<div class="bot-msg">Processing: "${text}"</div>`;
+    msgBox.scrollTop = msgBox.scrollHeight;
+  }, 600);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,483 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Profile — Peerify</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0b0f14;
+  --glass:#ffffff05;
+  --border:#ffffff12;
+  --neon1:#6a1b9a;
+  --neon2:#2193b0;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:#e9eef3;
+  font-family:'Poppins',sans-serif;
+
+}
+
+/* HEADER */
+header{
+  padding:16px 20px;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.container{
+  width: 600px;        /* Change width as you want */
+  margin: 40px auto;   /* Centers the container */
+  padding: 22px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
+}
+
+.topnav {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding: 20px;
+}
+
+.topnav a {
+  padding: 10px 22px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  transition: 0.25s;
+  font-weight: 500;
+}
+
+.topnav a:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-3px);
+}
+
+/* Highlight active page */
+.topnav a.active {
+  background: rgba(0, 153, 255, 0.3);
+  color: white;
+  border-color: rgba(0, 153, 255, 0.8);
+}
+
+/* ---- NAV BUTTON ANIMATION ---- */
+.topnav a {
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+/* Hover motion */
+.topnav a:hover {
+  transform: translateY(-4px) scale(1.05);
+}
+
+/* Glow border animation */
+.topnav a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 2px;
+  background: linear-gradient(90deg, #6a1b9a, #2193b0);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+/* Hover glow visible */
+.topnav a:hover::before {
+  opacity: 1;
+}
+
+/* Active page glowing */
+.topnav a.active::before {
+  opacity: 1;
+}
+
+.topnav a {
+  position: relative;
+  overflow: hidden;
+}
+
+.topnav a:hover::after {
+  content: "";
+  position: absolute;
+  width: 140%;
+  height: 140%;
+  left: -20%;
+  top: -20%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,0.25) 10%, transparent 60%);
+  transform: scale(0);
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  font-weight:600;
+}
+
+.profile-item{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 18px;
+  border-radius: 10px;
+  margin: 10px 0;
+  text-align: left;
+  font-size: 15px;
+}
+
+.profile-grid{
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.profile-heading{
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  background: linear-gradient(90deg,var(--neon1),var(--neon2));
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.badge{
+  display:inline-block;
+  padding:10px 20px;
+  border-radius:10px;
+  margin-top:16px;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  font-weight:600;
+  color:white;
+  font-size:18px;
+}
+
+ #bgAnim {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  filter: blur(0.6px);
+  opacity: 0.35;
+}
+
+ /* --- Neon Background Enhancement --- */
+body {
+  background:
+    radial-gradient(circle at 20% 30%, rgba(106,27,154,0.15), transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(33,147,176,0.15), transparent 60%),
+    var(--bg);
+  animation: bgFloat 16s infinite alternate ease-in-out;
+}
+
+@keyframes bgFloat {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 40px 60px, -60px -40px; }
+}
+
+/* --- Card fade in --- */
+.card {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeIn 0.7s forwards ease-out;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- Soft item hover glow --- */
+.profile-item {
+  transition: 0.25s;
+}
+
+.profile-item:hover {
+  border-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.10);
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(33,147,176,0.3);
+}
+
+/* Badge entrance animation */
+.badge {
+  animation: popIn 0.6s ease-out;
+}
+
+
+ .profile-heading {
+  position: relative;
+}
+
+.profile-heading::after {
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-6px;
+  width:100%;
+  height:2px;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  opacity:0.4;
+  border-radius:8px;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* CENTER CONTAINER */
+.container{
+  max-width:450px;
+  margin:40px auto;
+  padding:22px;
+}
+
+.card{
+  padding:22px;
+  background: linear-gradient(180deg,var(--glass),rgba(255,255,255,0.03));
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:0 18px 40px rgba(2,6,23,0.6);
+  text-align:center;
+}
+
+.badge{
+  display:inline-block;
+  padding:8px 16px;
+  border-radius:10px;
+  margin-top:10px;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  font-weight:600;
+  color:white;
+  font-size:16px;
+}
+#bgAnim {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  opacity: 0.32;
+  pointer-events: none;
+  filter: blur(0.4px);
+}
+
+textarea {
+    resize: none;
+overflow: auto;}
+
+
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:12px;">
+<div style="display:flex;flex-direction:column;">
+    <div style="font-weight:700;">Peerify</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.9)">Profile</div>
+   </div> 
+    <header class="topnav">
+  <nav>
+    <a href="login.html">Login</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="submit.html">Submit</a>
+    <a href="review.html">Review</a>
+    <a href="profile.html">Profile</a>
+    <a href="leaderboard.html">Leaderboard</a>
+  </nav>
+</header>
+
+  </div>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h2>Your Profile</h2>
+
+    <div id="profileBox">Loading profile...</div>
+
+  </div>
+</div>
+
+<script>
+/* SAME STORAGE KEYS */
+const STORAGE_KEYS = {
+  SKILLS:'hv_skills',
+  USERS:'hv_users',
+  CURRENT_USER:'hv_currentUser'
+};
+
+function getSkills(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.SKILLS)||'[]'); }
+function getUsers(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)||'{}'); }
+function currentUser(){ return localStorage.getItem(STORAGE_KEYS.CURRENT_USER)||''; }
+
+/* LOAD PROFILE INFO */
+function loadProfile(){
+  const user = currentUser();
+  const box = document.getElementById("profileBox");
+
+  if(!user){
+    box.innerHTML = "<p>Please login first.</p>";
+    return;
+  }
+
+  const users = getUsers();
+  const skills = getSkills();
+
+  const points = users[user]?.points || 0;
+
+  // Count submissions
+  const submitted = skills.filter(s => s.uploader === user).length;
+
+  // Count approved
+  const approved = skills.filter(s => s.uploader === user && s.status === "Approved").length;
+
+  // Badge logic
+  let badge = "none";
+  if(points >= 40) badge = "🥇Gold";
+  else if(points > 20) badge = "🥈Silver";
+  else if(points > 0) badge = "🥉Bronze";
+  
+ box.innerHTML = `
+  <div class="profile-heading">👤 Profile Overview</div>
+
+  <div class="profile-grid">
+    <div class="profile-item"><b>Username:</b> ${user}</div>
+    <div class="profile-item"><b>Total Points:</b> ${points}</div>
+    <div class="profile-item"><b>Skills Submitted:</b> ${submitted}</div>
+    <div class="profile-item"><b>Skills Approved:</b> ${approved}</div>
+  </div>
+
+  <div class="badge">${badge} Badge</div>
+`;
+
+
+  }
+ 
+loadProfile();
+</script>
+<script>
+  const page = location.pathname.split("/").pop();
+  document.querySelectorAll(".topnav a").forEach(a=>{
+    if(a.getAttribute("href") === page){
+      a.classList.add("active");
+    }
+  });
+
+</script>
+
+<script>
+const canvas = document.getElementById("bgAnim");
+const ctx = canvas.getContext("2d");
+
+let w, h;
+function resize(){
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+// Neon grid particles
+const particles = [];
+const particleCount = 55;
+
+for(let i=0; i<particleCount; i++){
+  particles.push({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4
+  });
+}
+
+function draw(){
+  ctx.clearRect(0, 0, w, h);
+
+  // Draw each particle
+  particles.forEach((p, i) => {
+    // Move particle
+    p.x += p.vx;
+    p.y += p.vy;
+
+    // Edge wrap
+    if(p.x < 0) p.x = w;
+    if(p.x > w) p.x = 0;
+    if(p.y < 0) p.y = h;
+    if(p.y > h) p.y = 0;
+
+    // Draw particle
+    ctx.fillStyle = (i % 2 === 0) ? "#6a1b9a" : "#2193b0";
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2, 0, Math.PI*2);
+    ctx.fill();
+
+    // Draw connecting lines
+    particles.forEach(p2 => {
+      const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+      if(dist < 110){
+        ctx.strokeStyle = `rgba(130,180,255,${1 - dist/110})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+    });
+  });
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+<script>
+  const page = location.pathname.split("/").pop();
+  document.querySelectorAll(".topnav a").forEach(a=>{
+    if(a.getAttribute("href") === page){
+      a.classList.add("active");
+    }
+  });
+</script>
+
+<canvas id="bgAnim"></canvas>
+
+</body>
+</html>

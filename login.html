@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Peerify — Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0b0f14;
+  --glass:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.12);
+  --neon1:#6a1b9a;
+  --neon2:#2193b0;
+}
+
+*{ box-sizing:border-box }
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:#e9eef3;
+  font-family:'Poppins',sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+
+/* Top gradient strip */
+header{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  padding:14px 22px;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  color:white;
+  font-size:20px;
+  font-weight:700;
+}
+
+/* Login box */
+.container{
+  width:100%;
+  max-width:420px;
+  padding:20px;
+}
+
+.card{
+  padding:22px;
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.02));
+  border:1px solid var(--border);
+  box-shadow:0 25px 70px rgba(2,6,23,0.6);
+}
+
+/* Tabs */
+.tabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.tab{
+  flex:1;
+  text-align:center;
+  padding:10px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  cursor:pointer;
+  color:#cfd6e3;
+  font-weight:600;
+  transition:0.25s;
+}
+
+.tab.active{
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+  border-color:transparent;
+  color:white;
+  transform:translateY(-3px);
+}
+
+/* Inputs */
+label{
+  display:block;
+  margin-top:10px;
+  font-weight:600;
+  font-size:14px;
+}
+
+input{
+  width:100%;
+  margin-top:6px;
+  padding:10px;
+  font-size:14px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.05);
+  color:white;
+}
+
+/* Button */
+.login-btn{
+  width:100%;
+  padding:10px;
+  margin-top:14px;
+  font-weight:700;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  color:white;
+  background:linear-gradient(90deg,var(--neon1),var(--neon2));
+}
+
+/* Back link */
+.back-home{
+  display:block;
+  text-align:center;
+  margin-top:14px;
+  text-decoration:none;
+  color:#7f8b99;
+  font-size:13px;
+}
+</style>
+</head>
+<body>
+
+<header>Peerify</header>
+
+<div class="container">
+  <div class="card">
+
+    <div class="tabs">
+      <button class="tab active" id="loginTab">Login</button>
+      <button class="tab" id="registerTab">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm">
+      <label>Username</label>
+      <input id="loginEmail" type="text" placeholder="Enter Username">
+
+      <label>Password</label>
+      <input id="loginPass" type="password" placeholder="Enter password">
+
+      <button type="button" class="login-btn" onclick="loginUser()">Login</button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="registerForm" style="display:none;">
+      <label>Username</label>
+      <input id="regName" type="text" placeholder="Choose username">
+
+      <label>Email</label>
+      <input id="regEmail" type="email" placeholder="Enter email">
+
+      <label>Password</label>
+      <input id="regPass" type="password" placeholder="Create password">
+
+      <button type="button" class="login-btn" onclick="registerUser()">Register</button>
+    </form>
+
+    <a class="back-home" href="home.html">← Back to Home</a>
+  </div>
+</div>
+
+<script>
+/* Switch tabs */
+const loginTab=document.getElementById("loginTab");
+const registerTab=document.getElementById("registerTab");
+const loginForm=document.getElementById("loginForm");
+const registerForm=document.getElementById("registerForm");
+
+loginTab.onclick=()=>{
+  loginTab.classList.add("active");
+  registerTab.classList.remove("active");
+  loginForm.style.display="block";
+  registerForm.style.display="none";
+};
+
+registerTab.onclick=()=>{
+  registerTab.classList.add("active");
+  loginTab.classList.remove("active");
+  loginForm.style.display="none";
+  registerForm.style.display="block";
+};
+
+/* ----- STORAGE HELPERS ----- */
+function getUsers(){
+  return JSON.parse(localStorage.getItem("hv_users") || "{}");
+}
+
+function setUsers(u){
+  localStorage.setItem("hv_users", JSON.stringify(u));
+}
+
+/* ----- REGISTER USER ----- */
+function registerUser(){
+  const name = document.getElementById("regName").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const pass = document.getElementById("regPass").value.trim();
+
+  if(!name || !email || !pass){
+    alert("Enter name, email and password");
+    return;
+  }
+
+  if(!email.endsWith("@gmail.com")){
+    alert("Email must be a valid Gmail address (example@gmail.com)");
+    return;
+  }
+
+  let users = getUsers();
+
+  if(users[email]){
+    alert("User already registered. Please login.");
+    return;
+  }
+
+  users[email] = { 
+    name: name, 
+    email: email, 
+    password: pass,
+    points: 0,
+    submitted: 0,
+    approved: 0
+  };
+
+  setUsers(users);
+
+  // SAVE logged in user
+  localStorage.setItem("hv_currentUser", email);
+
+  alert("Registration successful!");
+  window.location.href = "dashboard.html";
+}
+
+
+/* ----- LOGIN USER ----- */
+ function loginUser(){
+  // read the inputs that actually exist in your HTML
+  const name = document.getElementById("loginEmail").value.trim();
+  const pass = document.getElementById("loginPass").value.trim();
+
+  if(!name || !pass){
+    alert("Enter username and password");
+    return;
+  }
+
+  // use the same storage helpers you already have
+  let users = getUsers(); // expects object keyed by email
+
+  // find a user by stored name (case-insensitive)
+  let foundEmail = null;
+  for (let email in users) {
+    if (users[email].name && users[email].name.toLowerCase() === name.toLowerCase()) {
+      foundEmail = email;
+      break;
+    }
+  }
+
+  if (!foundEmail) {
+    alert("No account found with that username");
+    return;
+  }
+
+  const user = users[foundEmail];
+  if (user.password !== pass) {
+    alert("Incorrect password");
+    return;
+  }
+
+  // success: save the logged-in user's email key (so other pages can load full profile)
+  localStorage.setItem("hv_currentUser", foundEmail);
+
+  alert("Login successful!");
+  window.location.href = "dashboard.html";
+}
+
+
+  
+</script>
+
+</body>
+</html>
